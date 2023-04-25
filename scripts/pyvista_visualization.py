@@ -5,15 +5,16 @@ from sklearn.preprocessing import MinMaxScaler
 import pyvista as pv
 from matplotlib.colors import ListedColormap
 
-# Loads npz 
-embeddings_npz = np.load('../sample_data/cohere_memory_embeddings.npz')
 
-rgb = embeddings_npz['pca5'][:, 2:5]
-xyz = embeddings_npz['pca5'][:,:3]
+# # Loads npz 
+# embeddings_npz = np.load('../sample_data/cohere_memory_embeddings.npz')
 
-# simply pass the numpy points to the PolyData constructor
-cloud = pv.PolyData(xyz)
-cloud.plot(point_size=15)
+# rgb = embeddings_npz['pca5'][:, 2:5]
+# xyz = embeddings_npz['pca5'][:,:3]
+
+# # simply pass the numpy points to the PolyData constructor
+# cloud = pv.PolyData(xyz)
+# cloud.plot(point_size=15)
 
 
 # points = np.column_stack((xy_array, np.zeros(xy_array.shape[0])))
