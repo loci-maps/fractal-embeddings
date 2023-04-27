@@ -55,16 +55,7 @@ def run_dimensionality_reduction(embeddings, reductions):
     return results
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Perform dimensionality reduction on embeddings and visualize them.")
-    parser.add_argument("-e", "--embeddings", type=str, required=True, help="Embeddings NPZ file.")
-    parser.add_argument("-f", "--filenames", type=str, required=False, help="Optional CSV file containing filenames.")
-    parser.add_argument("-o", "--output_npz", type=str, required=False, help="Output NPZ file for reduced embeddings.")
-    parser.add_argument("-p", "--plot", action="store_true", required=False, help="Plot reduced embeddings.")
-    parser.add_argument("-r", "--reductions", type=str, required=False, help="Comma-separated list of reductions to perform. Defaults to all.")
-
-    args = parser.parse_args()
-
+def main(args):
     # Load embeddings
     npz_file = np.load(args.embeddings, allow_pickle=True)
     embeddings = npz_file['embeddings']
@@ -116,4 +107,12 @@ def main():
             plot_embeddings(reduced_embeddings["umap2"], reduced_embeddings["pca5"][:, 2:5], "UMAP 2 components", filenames)
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Perform dimensionality reduction on embeddings and visualize them.")
+    parser.add_argument("-e", "--embeddings", type=str, required=True, help="Embeddings NPZ file.")
+    parser.add_argument("-f", "--filenames", type=str, required=False, help="Optional CSV file containing filenames.")
+    parser.add_argument("-o", "--output_npz", type=str, required=False, help="Output NPZ file for reduced embeddings.")
+    parser.add_argument("-p", "--plot", action="store_true", required=False, help="Plot reduced embeddings.")
+    parser.add_argument("-r", "--reductions", type=str, required=False, help="Comma-separated list of reductions to perform. Defaults to all.")
+
+    args = parser.parse_args()
+    main(args)

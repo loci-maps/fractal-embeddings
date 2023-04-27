@@ -115,7 +115,6 @@ def main():
     df_embeddings.to_csv(args.embeddings_csv, index=False)
 
     # Save embeddings as a .npz file (optional)
-
     # replaces .csv with .npz
     npz_filename = args.embeddings_csv[:-4] + ".npz"
     if args.npz:
