@@ -15,12 +15,6 @@ class MyNode:
     def get_children(self):
         return len(self.files)
 
-def read_embeddings(embedding_file, filenames_file):
-    embeddings_npz = np.load(embedding_file)
-    embeddings = embeddings_npz['embeddings']
-    filenames = pd.read_csv(filenames_file, header=None).squeeze().tolist()
-    return embeddings, filenames
-
 def traverse_CF_tree2(tree, vector_names):
     if tree.is_leaf():
         new_node = MyNode()
@@ -88,8 +82,6 @@ def get_all_centroids(tree, df):
 
     return levels, pca_results
 
-
-
 def euclidean_distance(a, b):
     return np.sqrt(np.sum((a - b) ** 2))
 
@@ -145,8 +137,23 @@ def save_statistics_to_file(stats, filename="level_statistics.txt"):
             #     f.write(f"{dist}\n")
             f.write("\n")
 
+def read_embeddings(embedding_file, filenames_file=None):
+    embeddings_npz = np.load(embedding_file)
+    embeddings = embeddings_npz['embeddings']
+
+    # Load filenames if provided
+    filenames = None
+    if 'filenames' in embeddings_npz:
+        filenames = embeddings_npz['filenames']
+
+    if filenames_file is not None:
+        filenames = pd.read_csv(filenames_file).values()
+
+    return embeddings, filenames
+
 def main(args):
     embeddings, filenames = read_embeddings(args.embeddings, args.filenames)
+
     df = pd.DataFrame(embeddings)
     df['filename'] = filenames
 
@@ -157,8 +164,8 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Hierarchical clustering analysis of embeddings.")
-    parser.add_argument("embeddings", help="Path to the embeddings NPZ file.")
-    parser.add_argument("filenames", help="Path to the filenames CSV file.")
+    parser.add_argument("-e", "--embeddings", required=True, help="Path to the embeddings NPZ file.")
+    parser.add_argument("-f", "--filenames", required=False, help="Path to the filenames CSV file.")
     parser.add_argument("-o", "--output", help="Path to save the output statistics file.", default="level_statistics.txt")
 
     args = parser.parse_args()

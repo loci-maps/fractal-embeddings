@@ -74,9 +74,8 @@ def main():
     if 'filenames' in npz_file:
         filenames = npz_file['filenames']
 
-    # filenames is a csv with one coumn labeled "filename" 
     if args.filenames is not None:
-        filenames = pd.read_csv(args.filenames, header=None).values
+        filenames = pd.read_csv(args.filenames).values
 
     reductions = ["pca5", "tsne2", "umap5", "umap2"]
     if args.reductions is not None:

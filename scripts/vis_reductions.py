@@ -2,7 +2,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-# Loads npz
+
+Loads npz
 embeddings_npz = np.load('../sample_data/combined_reduced_embeddings.npz')
 
 # filenames csv
