@@ -22,7 +22,7 @@ def read_embeddings(embedding_file, filenames_file):
     return embeddings, filenames
 
 def traverse_CF_tree2(tree, vector_names):
- if tree.is_leaf():
+    if tree.is_leaf():
         new_node = MyNode()
         new_node.files.append(vector_names[tree.get_id()])
         return new_node

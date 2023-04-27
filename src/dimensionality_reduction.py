@@ -58,19 +58,23 @@ def run_dimensionality_reduction(embeddings, reductions):
 def main():
     parser = argparse.ArgumentParser(description="Perform dimensionality reduction on embeddings and visualize them.")
     parser.add_argument("-e", "--embeddings", type=str, required=True, help="Embeddings NPZ file.")
-    parser.add_argument("-f", "--filenames", type=str, help="Optional CSV file containing filenames.")
+    parser.add_argument("-f", "--filenames", type=str, required=False, help="Optional CSV file containing filenames.")
     parser.add_argument("-o", "--output_npz", type=str, required=False, help="Output NPZ file for reduced embeddings.")
-    parser.add_argument("-p", "--plot", type=str, required=False, help="Plot reduced embeddings.")
+    parser.add_argument("-p", "--plot", action="store_true", required=False, help="Plot reduced embeddings.")
     parser.add_argument("-r", "--reductions", type=str, required=False, help="Comma-separated list of reductions to perform. Defaults to all.")
 
     args = parser.parse_args()
 
     # Load embeddings
-    embeddings = np.load(args.embeddings)['embeddings']
+    npz_file = np.load(args.embeddings, allow_pickle=True)
+    embeddings = npz_file['embeddings']
 
     # Load filenames if provided
-    # filenames is a csv with one coumn labeled "filename" 
     filenames = None
+    if 'filenames' in npz_file:
+        filenames = npz_file['filenames']
+
+    # filenames is a csv with one coumn labeled "filename" 
     if args.filenames is not None:
         filenames = pd.read_csv(args.filenames, header=None).values
 
@@ -92,7 +96,7 @@ def main():
         np.savez(args.output_npz, **reduced_embeddings)
 
     if args.plot is None:
-        print("No plot file provided. Skipping plotting reduced embeddings.")
+        print("No plot provided. Skipping plotting reduced embeddings.")
         return
     else:
         # Plot the reduced embeddings that were requested in reductions 

@@ -1,6 +1,7 @@
 import os
 import re
 import pandas as pd
+import numpy as np
 import configparser
 import cohere
 import time
@@ -44,7 +45,7 @@ def chunk_text(text, max_len=512):
 
     return chunks
 
-def create_embeddings(df, api_key, rate_limit_calls=100, rate_limit_duration=60, batch_size=96):
+def create_embeddings(df, api_key, rate_limit_calls=100, rate_limit_duration=60, batch_size=96, dir=""):
     co = cohere.Client(api_key)
     embeddings = []
 
@@ -64,7 +65,7 @@ def create_embeddings(df, api_key, rate_limit_calls=100, rate_limit_duration=60,
 
     embedding_batches = [embeddings[i:i+batch_size] for i in range(0, len(embeddings), batch_size)]
 
-    for batch in tqdm(embedding_batches, total=len(embedding_batches), desc="Embedding text"):
+    for batch in tqdm(embedding_batches, total=len(embedding_batches), desc=f"Embedding {dir}"):
         texts = [item['chunk_text'] for item in batch]
         response = co.embed(texts=texts, model='large', truncate='END')
 
@@ -87,10 +88,17 @@ def create_embeddings(df, api_key, rate_limit_calls=100, rate_limit_duration=60,
     return df_embeddings
 
 
+def save_embeddings_npz(df_embeddings, output_npz):
+    embeddings = df_embeddings['embedding'].apply(pd.Series).to_numpy()
+    filenames = df_embeddings['filename'].to_numpy()
+    np.savez(output_npz, filenames=filenames, embeddings=embeddings)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Embed text from markdown files in a directory.")
     parser.add_argument("-i", "--input_dir", type=str, default="../input", help="Input directory containing markdown files.")
     parser.add_argument("-e", "--embeddings_csv", type=str, default="input_embeddings.csv", help="Output CSV file for embeddings dataframe.")
+    parser.add_argument("-n", "--npz", action="store_true", help="Save embeddings as a .npz file.")
     parser.add_argument("-c", "--config", type=str, default="../config.ini", help="Configuration file containing the API key.")
 
     args = parser.parse_args()
@@ -105,6 +113,14 @@ def main():
     # Create embeddings
     df_embeddings = create_embeddings(df, api_key)
     df_embeddings.to_csv(args.embeddings_csv, index=False)
+
+    # Save embeddings as a .npz file (optional)
+
+    # replaces .csv with .npz
+    npz_filename = args.embeddings_csv[:-4] + ".npz"
+    if args.npz:
+        save_embeddings_npz(df_embeddings, npz_filename)
+
 
 if __name__ == "__main__":
     main()
