@@ -48,7 +48,7 @@ def run_dimensionality_reduction(embeddings, reductions):
     if "umap2" in reductions:
         # UMAP
         print("Running UMAP 2")
-        umap_reducer2 = umap.UMAP(n_components=2)
+        umap_reducer2 = umap.UMAP(n_components=2, random_state=42)
         embeddings_umap2 = umap_reducer2.fit_transform(embeddings)
         results["umap2"] = embeddings_umap2
 

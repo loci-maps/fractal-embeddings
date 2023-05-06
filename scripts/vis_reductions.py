@@ -3,13 +3,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-Loads npz
+# Loads npz
 embeddings_npz = np.load('../sample_data/combined_reduced_embeddings.npz')
 
 # filenames csv
 filenames = pd.read_csv('../sample_data/combined_filenames.csv', header=None)
 
-rgb = embeddings_npz['pca5'][:, :3]
+
+rgb = embeddings_npz['pca5'][:, 2:5]
 xy = embeddings_npz['umap2']
 
 plt.scatter(xy[:,0], xy[:,1], c=rgb)
