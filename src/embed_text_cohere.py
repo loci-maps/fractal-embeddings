@@ -8,10 +8,10 @@ import time
 from tqdm import tqdm
 import argparse
 
-def extract_links(text):
-    links = re.findall(r"\[\[.*?\]\]", text)
-    links = [link.strip("[[").strip("]]") for link in links]
-    return links
+# def extract_links(text):
+#     links = re.findall(r"\[\[.*?\]\]", text)
+#     links = [link.strip("[[").strip("]]") for link in links]
+#     return links
 
 def read_input_data(input_dir):
     data = []
@@ -22,10 +22,10 @@ def read_input_data(input_dir):
                 with open(os.path.join(root, filename), "r") as f:
                     text = f.read()
 
-                links = extract_links(text)
-                data.append({"filename": filename[:-3], "text": text, "links": links})
+                # links = extract_links(text)
+                data.append({"filename": filename[:-3], "text": text})
 
-    df = pd.DataFrame(data, columns=["filename", "text", "links"])
+    df = pd.DataFrame(data, columns=["filename", "text"])
     return df
 
 def chunk_text(text, max_len=512):
@@ -55,10 +55,10 @@ def create_embeddings(df, api_key, rate_limit_calls=100, rate_limit_duration=60,
     for i, row in df.iterrows():
         text_chunks = chunk_text(row['text'])
 
-        for chunk in text_chunks:
+        for chunk_num, chunk in enumerate(text_chunks):
             embeddings.append({
                 'filename': row['filename'],
-                'index': i,
+                'chunk_num': chunk_num,
                 'chunk_text': chunk,
                 'embedding': None
             })
@@ -86,6 +86,9 @@ def create_embeddings(df, api_key, rate_limit_calls=100, rate_limit_duration=60,
     df_embeddings = pd.DataFrame(embeddings)
     df_embeddings = df_embeddings.merge(df[['filename', 'links']], on='filename', how='left')
     return df_embeddings
+
+
+# def summarize_e
 
 
 def save_embeddings_npz(df_embeddings, output_npz):
