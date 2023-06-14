@@ -84,7 +84,7 @@ class CustomDendrogram:
         for i in range(len(linkage_matrix)):
             x = ddata['icoord'][i]
             y = ddata['dcoord'][i]
-
+    
             label = 
 
         for icoord, dcoord, label in zip(ddata['icoord'], ddata['dcoord'], link_labels[len(self.data_to_cluster):]):
